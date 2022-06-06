@@ -1,0 +1,8 @@
+export const FETCH_POSTS_REQUEST = 'FETCH_POSTS_REQUEST'
+export const FETCH_POSTS_SUCCESS = 'FETCH_POSTS_SUCCESS'
+export const FETCH_SINGLE_POST_SUCCESS = 'FETCH_SINGLE_POST_SUCCESS'
+export const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE'
+export const FETCH_MEDIA = 'FETCH_MEDIA'
+
+
+export const SITE_URL = 'http://localhost/grofers/'

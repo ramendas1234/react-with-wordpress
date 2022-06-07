@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+// redux stuff
+import { connect } from 'react-redux'
+import { loginUser } from '../redux'
 import { Navigate } from 'react-router-dom';
 
 
@@ -10,19 +13,20 @@ import Error from './Error'
 import { SITE_URL } from './constant/constant'
 import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
 
-function Login() {
+function Login(props) {
 
+    const { userData, loginUser } = props
 
-    if (isUserLoggedIn()) {
-        return <Navigate to='/dashboard'/>;
-      }
+    // if (isUserLoggedIn()) {
+    //     return <Navigate to='/dashboard'/>;
+    //   }
 
     let loginState = {
-        loading:false,
-        error:'',
+        // loading:false,
+        // error:'',
         email:'',
         password:'',
-        loggedIn:isUserLoggedIn(),
+        //loggedIn:userData.authenticated,
     }
     const [ loginData, setLoginData ] = useState(loginState);
 
@@ -35,75 +39,19 @@ function Login() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setLoginData({
-            ... loginData,
-            error : '',
-            loading : true,
-        })
+        
         let postData = {
             username: loginData.email,
             password: loginData.password
         }
+
+        loginUser(postData)
     
-    /*const setAuthorizationHeader = (token) => {
-            const FBIdToken = `Bearer ${token}`
-            localStorage.setItem('FBIdToken',`Bearer ${token}`);
-            axios.defaults.headers.common['Authorization'] = FBIdToken ;
-    } */   
-
-        axios.post(`${SITE_URL}wp-json/jwt-auth/v1/token`, postData)
-        .then(response => {
-            const { token, user_email, user_nicename, user_display_name } = response.data
-            if(!token){
-                setLoginData({
-                    ... loginData,
-                    error : 'Authorization Failed',
-                    loading : false,
-                })
-                return false
-            }
-            setAuthorizationHeader(token)
-            
-
-            return axios.post(`${SITE_URL}wp-json/wp/v2/users/me`);
-
-
-        })
-        .then(response => {
-            var userObject = response.data 
-            // Put the object into storage
-            localStorage.setItem('userdata', JSON.stringify(userObject));
-            /*var userObject = { user_email, user_nicename, user_display_name };
-
-            // Put the object into storage
-            localStorage.setItem('userdata', JSON.stringify(userObject));
-            */
-            setLoginData({
-                ... loginData,
-                error : '',
-                loading : false,
-                loggedIn:true
-            });
-           // this.props.history.push('/dashboard')
-            window.location = "/dashboard"; 
-        })
-        .catch(error => {
-            console.log(error);
-
-            setLoginData({
-                ... loginData,
-                error : error.response.data.message,
-                loading : false
-            })
-        })
-
-        
-
     }
     
-    if (loginData.loggedIn) {
-        return <Navigate to='/dashboard'/>;
-      }
+    // if (userData.authenticated) {
+    //     return <Navigate to='/dashboard'/>;
+    //   }
 
   return (
     <>
@@ -113,7 +61,7 @@ function Login() {
         <div className='container m-5'>
             <div className='offset-md-6 col-md-4'>
             <h3 className='my-3'>Login Your Account</h3>
-                {loginData.error.length>0 && <Error msg={loginData.error}/> }
+                {userData.error.length>0 && <Error msg={userData.error}/> }
                 
                 <form onSubmit={handleSubmit}>
                     <div class="form-group mb-3">
@@ -124,7 +72,7 @@ function Login() {
                     </div>
                     <div class="form-group mb-3">
                         {/* <button type="submit" class="btn btn-danger">Login</button> */}
-                        <Button btnClassName="btn btn-primary" loading={loginData.loading}>Login</Button>
+                        <Button btnClassName="btn btn-primary" loading={userData.btn_loading}>Login</Button>
                     </div>
                     
                 </form>
@@ -137,4 +85,18 @@ function Login() {
   )
 }
 
-export default Login
+const mapStateToProps = (store) => {
+    return {
+        userData: store.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        loginUser : (postData) => {
+            dispatch(loginUser(postData))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login)

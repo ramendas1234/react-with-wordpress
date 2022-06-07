@@ -5,4 +5,9 @@ export const FETCH_POSTS_FAILURE = 'FETCH_POSTS_FAILURE'
 export const FETCH_MEDIA = 'FETCH_MEDIA'
 
 
+export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST'
+export const SET_AUTHENTICATED = 'SET_AUTHENTICATED'
+export const SET_USER = 'SET_USER'
+export const SET_USER_ERRORS = 'SET_USER_ERRORS'
+
 export const SITE_URL = 'http://localhost/grofers/'

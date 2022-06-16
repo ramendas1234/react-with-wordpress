@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 // redux stuff
 import { connect } from 'react-redux'
-import { loginUser } from '../redux'
-import { Navigate } from 'react-router-dom';
+import { loginUser, isUserLoggedIn } from '../redux'
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 import Navbar from './Navbar'
@@ -11,15 +11,27 @@ import Footer from './Footer'
 import Button from './Button'
 import Error from './Error'
 import { SITE_URL } from './constant/constant'
-import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
+//import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
 
 function Login(props) {
+    const navigate = useNavigate();
+    const { userData, loginUser, isUserLoggedIn } = props
 
-    const { userData, loginUser } = props
-
-    // if (isUserLoggedIn()) {
-    //     return <Navigate to='/dashboard'/>;
-    //   }
+    useEffect(() => {
+        
+        isUserLoggedIn()
+        // setTimeout(function(){
+        //     console.log(userData);
+        // },2000)
+        console.log(userData);
+        if (userData.authenticated) {
+            //return <Navigate to='/dashboard'/>;
+            navigate('/dashboard')
+          }
+        
+    },[props.userData.authenticated])
+    
+    
 
     let loginState = {
         // loading:false,
@@ -95,6 +107,9 @@ const mapDispatchToProps = (dispatch) =>{
     return {
         loginUser : (postData) => {
             dispatch(loginUser(postData))
+        },
+        isUserLoggedIn: () => {
+            dispatch(isUserLoggedIn())
         }
     }
 }

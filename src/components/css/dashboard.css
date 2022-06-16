@@ -39,7 +39,7 @@
     line-height: 200px;
     position: absolute; /* Tweak the position property if the element seems to be unfit */
     top: 10px;
-    left: 152px;
+    left: 25%;
     background: linear-gradient(180deg, transparent, black);
     opacity: 0;
     transition: 0.3s ease;

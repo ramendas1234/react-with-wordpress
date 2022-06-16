@@ -7,7 +7,10 @@ export const FETCH_MEDIA = 'FETCH_MEDIA'
 
 export const FETCH_USER_REQUEST = 'FETCH_USER_REQUEST'
 export const SET_AUTHENTICATED = 'SET_AUTHENTICATED'
+export const SET_UNAUTHENTICATED = 'SET_UNAUTHENTICATED'
 export const SET_USER = 'SET_USER'
 export const SET_USER_ERRORS = 'SET_USER_ERRORS'
+export const USER_REGISTER = 'USER_REGISTER'
+export const AVATAR_LOADING = 'AVATAR_LOADING'
 
 export const SITE_URL = 'http://localhost/grofers/'

@@ -1,18 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Navigate, Link } from 'react-router-dom';
+// redux stuff
+import { connect } from 'react-redux'
+import { loginUser, isUserLoggedIn } from '../redux'
 
-import { isUserLoggedIn, getUserData } from './actions/actions'
+
+//import { isUserLoggedIn, getUserData } from './actions/actions'
 
 import Navbar from './Navbar'
 import DashboardNavigation from './DashboardNavigation'
 import Footer from './Footer'
 import './css/dashboard.css'
 
-export default function Dashboard() {
-    if (!isUserLoggedIn()) {
-        return <Navigate to='/login'/>;
-      }
-    let userData = getUserData();
+function Dashboard(props) {
+    
+      const { userData,isUserLoggedIn  } = props
+      useEffect(() => {
+          isUserLoggedIn()
+          if (!userData.authenticated) {
+              return <Navigate to='/login'/>;
+            }
+      },[])
   return (
     <>
         <Navbar />
@@ -51,3 +59,20 @@ export default function Dashboard() {
     </>
   )
 }
+
+
+const mapStateToProps = (store) => {
+  return {
+      userData: store.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+      isUserLoggedIn: () => {
+          dispatch(isUserLoggedIn())
+      }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard)

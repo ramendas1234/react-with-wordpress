@@ -1,7 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { Navigate } from 'react-router-dom';
+
 
 import axios  from 'axios'
+// redux stuff
+import { connect } from 'react-redux'
+import { registerUser,isUserLoggedIn } from '../redux'
+import { Navigate } from 'react-router-dom';
+
 import { SITE_URL } from './constant/constant'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
@@ -14,17 +19,19 @@ import Alert from 'react-bootstrap/Alert'
 import Navbar from './Navbar'
 import Footer from './Footer'
 
-import { isUserLoggedIn, getUserData } from './actions/actions'
+// import { isUserLoggedIn, getUserData } from './actions/actions'
 
-function Register() {
-
-  if (isUserLoggedIn()) {
-    return <Navigate to='/dashboard'/>;
-  }
+function Register(props) {
+  const { userData, registerUser, isUserLoggedIn } = props;
+  
+  useEffect(() => {
+      isUserLoggedIn()
+      if (userData.authenticated) {
+          return <Navigate to='/dashboard'/>;
+        }
+  },[])
 
   let registredInitial = {
-    loading: false,
-    
     data:{
       first_name:'',
       last_name:'',
@@ -43,9 +50,6 @@ function Register() {
       confirm_password:'Type ConfirmPassword',
       terms_condition:'You must agree before submitting.',
     },
-    api_response_msg:'',
-    registration_success:false
-
 }
 
   const [register, setRegister] = useState(registredInitial);
@@ -70,38 +74,19 @@ function Register() {
         event.stopPropagation();
         setValidated(true);
       }else{
-        setRegister({... register, loading:true})
         const { data:{ first_name,last_name,username,email,password,confirm_password } } = register
         let postData = {
           first_name,last_name,username,email,password,confirm_password
         }
+        registerUser(postData);
 
-        axios.post(`${SITE_URL}wp-json/wp/v2/users/register`, postData)
-        .then(response => {
-          if(response.data.code==200){
-            setRegister({... register, loading:false, api_response_msg:response.data.message,registration_success:true})
-            setTimeout(function(){
-              //return <Navigate to='/login'/>
-              window.location.href='/login'
-            },2000)
-          }
-            
-
-
-        })
-        .catch(error => {
-          const {message, data:{error_field}} = error.response.data
-          setRegister({... register, loading:false, api_response_msg:message})
-          setValidated(true);
-        })
-
-        
       }
 
       
   }
 
-  let alertClass = (register.registration_success)?'success':'danger'
+ 
+  let alertClass = (userData.success_msg.length>0)?'success':'danger'
     
   return (
 
@@ -116,9 +101,15 @@ function Register() {
           <Row className="my-5">
             <Col  md={{ span: 4, offset: 4 }}>
               <h3 className='my-3'>Register Your Account</h3>
-              {register.api_response_msg.length>0 &&  (
+              {userData.success_msg.length>0 &&  (
                 <Alert  variant={alertClass}>
-                  {register.api_response_msg}
+                  {userData.success_msg}
+                </Alert>
+              ) }
+
+              {userData.error.length>0 &&  (
+                <Alert  variant={alertClass}>
+                  {userData.error}
                 </Alert>
               ) }
               
@@ -203,7 +194,7 @@ function Register() {
                 feedbackType="invalid"
               />
             </Form.Group>
-            <Button type="submit"  btnClassName="btn btn-primary" loading={register.loading} >Register</Button>
+            <Button type="submit"  btnClassName="btn btn-primary" loading={userData.btn_loading} >Register</Button>
             </Col>
               
           </Row>
@@ -226,4 +217,21 @@ function Register() {
   )
 }
 
-export default Register
+const mapStateToProps = (store) => {
+  return {
+      userData: store.user
+  }
+}
+
+const mapDispatchToProps = (dispatch) =>{
+  return {
+    registerUser : (postData) => {
+          dispatch(registerUser(postData))
+      },
+      isUserLoggedIn: () => {
+          dispatch(isUserLoggedIn())
+      }
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Register)

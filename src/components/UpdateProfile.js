@@ -1,8 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import axios from 'axios';
-import { Navigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 
-import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
+import { connect } from 'react-redux'
+import { useDispatch } from 'react-redux';
+import { getUserData, updateUserData, isUserLoggedIn } from '../redux'
+
+// import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
 import { SITE_URL } from './constant/constant'
 import Button from './Button'
 import Navbar from './Navbar'
@@ -12,20 +16,74 @@ import DashboardNavigation from './DashboardNavigation'
 import Footer from './Footer'
 import './css/dashboard.css'
 
-export default function UpdateProfile() {
-    if (!isUserLoggedIn()) {
-        return <Navigate to='/login'/>;
-      }else{
-        setAuthorizationHeader();
-      }
+function UpdateProfile(props) {
+    const navigate = useNavigate();
+    const { userData, isUserLoggedIn, getUserData, updateUserData } = props
+    const { user_details } = userData
 
-    const { id, username, first_name, last_name,email, description, user_meta:{ profile_image } } = getUserData();
-    const [ user, setUser ] = useState({loading:false,flag:false,msg:'',full_name:first_name+' '+last_name, id, username, email, description });
+ 
+     const initialState = {
+        id:'',
+        full_name:'',
+        username:'',
+        email:'',
+        description:'',
+        profile_image:''
+    }
+
+    const [ user, setUser ] = useState(initialState);
+    useEffect(() => {
+       
+       if (userData.authenticated) {
+             
+            
+            if("email" in user_details){
+                const { user_meta:{ profile_image } } = user_details;
+                setUser(user => ({ ...user, 
+                    id: user_details.id?user_details.id:'',
+                    full_name:user_details.first_name+' '+user_details.last_name,
+                    username: user_details.username,
+                    email: user_details.email,
+                    description: user_details.description,
+                    profile_image: profile_image
+                 }));
+
+                
+            }else{
+                getUserData()
+            }
+            
+        }else{
+            isUserLoggedIn()
+        }
+        
+
+    },[userData.authenticated,user_details]) 
+
+    /*useEffect(() => {
+        if("email" in user_details){
+            const { id, username, first_name, last_name,email, description } = user_details;
+            //const [ user, setUser ] = useState({full_name:first_name+' '+last_name, id, username, email, description });
+           
+            setUser({
+                ... user,
+                id: user_details.id?user_details.id:'',
+                email: user_details.email?user_details.email:'',
+            })
+        } 
+    },[user]) */
+    
+    
+    //const { id, username, first_name, last_name,email, description, user_meta:{ profile_image } } = user_details;
+    
+    
+    
+    
     const imgUpload = useRef(null);
-    const [img, setImg] = useState(profile_image);
+    const [img, setImg] = useState('');
     const [imageLoading, setImageLoading] = useState(false);
 
-
+    //console.log(user);
 
 
     const handleChange = (e) => {
@@ -43,7 +101,18 @@ export default function UpdateProfile() {
         }
       }
 
-    const updateItem = (event) => {
+      const updateItem = (event) => {
+        if(imgUpload.current.files.length > 0){
+            var formData = new FormData();
+            let file = imgUpload.current.files[0];
+            formData.append( 'image', file );
+            formData.append( 'title', file.name );
+            let headers = {};
+            headers['Content-Disposition'] = 'form-data; filename=\''+file.name+'\'';
+            updateUserData(formData, headers, true);
+        }
+    }  
+    /*const updateItem = (event) => {
         if(imgUpload.current.files.length > 0){
             setImageLoading(true);
             var formData = new FormData();
@@ -65,12 +134,10 @@ export default function UpdateProfile() {
                 console.log(error.response.data)
             });
         }
-    }
+    } */
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setUser({... user, loading:true})
-        //console.log(user.full_name); return false;
         const full_name = splitName(user.full_name);
         //console.log();
         let postData = {
@@ -80,10 +147,11 @@ export default function UpdateProfile() {
             description: user.description
         }
 
+        updateUserData(postData)
         //console.log(postData); return false;
 
         
-        axios.post(`${SITE_URL}wp-json/wp/v2/users/me`, postData)
+        /*axios.post(`${SITE_URL}wp-json/wp/v2/users/me`, postData)
         .then(response=>{
             //console.log(response)
             var userObject = response.data
@@ -96,11 +164,11 @@ export default function UpdateProfile() {
             
             setUser({... user, loading:false, flag:false,msg:error.response.data.message})
             console.log(user);
-        })
+        }) */
     }
 
 
-    let alertClass = (user.flag)?'success':'danger'
+    //let alertClass = (userData.flag)?'success':'danger'
     let opacityClass = (imageLoading)?'opacity-100':''
     
 
@@ -129,20 +197,26 @@ export default function UpdateProfile() {
                           <div class="offset-md-3 col-md-4 col-sm-5 col-xs-12 gutter">
                           
                               <h2 className='mb-5'>Update Profile</h2>
-                              {user.msg.length>0 &&  (
-                                    <Alert  variant={alertClass}>
-                                    {user.msg}
+                              {userData.error.length>0 &&  (
+                                    <Alert  variant="danger">
+                                    {userData.error}
                                     </Alert>
                                 ) }
+
+                                {userData.success_msg.length>0 &&  (
+                                    <Alert  variant="success">
+                                    {userData.success_msg}
+                                    </Alert>
+                                ) }  
                                 
                                 
                               <form>
                                     <div class="preview text-center">
-                                        <img class="preview-img" src={img} alt="Preview Image" width="200" height="200"/>
+                                        <img class="preview-img" src={user.profile_image} alt="Preview Image" width="200" height="200"/>
                                         
                                         
                                         <div class={`browse-button`}  >
-                                        {imageLoading && <Spinner animation="border" variant="primary" />}
+                                        {userData.avatar_loading && <Spinner animation="border" variant="primary" />}
                                         
                                             <i class="fa fa-pencil-alt"></i>
                                             <input class="browse-input" type="file" id="UploadedFile" ref={imgUpload} onChange={updateItem} />
@@ -174,7 +248,7 @@ export default function UpdateProfile() {
                                   </div>
                                   <div class="form-group mb-3">
                                       {/* <input class="btn btn-primary btn-block" type="submit" value="Update"/> */}
-                                      <Button btnClassName="btn btn-primary" loading={user.loading}>Update</Button>
+                                      <Button btnClassName="btn btn-primary" loading={userData.btn_loading}>Update</Button>
                                   </div>
                               </form>
                           </div>
@@ -189,3 +263,26 @@ export default function UpdateProfile() {
     </>
   )
 }
+
+
+const mapStateToProps = (store) => {
+    return {
+        userData: store.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        isUserLoggedIn: () => {
+            dispatch(isUserLoggedIn())
+        },
+        getUserData: () => {
+            dispatch(getUserData())
+        },
+        updateUserData: (postData,headers,updateAvatar) => {
+            dispatch(updateUserData(postData,headers,updateAvatar))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateProfile)

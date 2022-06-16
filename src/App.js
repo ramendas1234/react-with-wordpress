@@ -1,9 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
+import { BrowserRouter,Router, Link,Switch, Routes, Route } from "react-router-dom";
 import { Provider } from 'react-redux';
 import store from './redux/store'
 import './bootstrap.min.css';
 import './components/js/bootstrap.bundle.min.js'
+import PrivateRoute from "./components/PrivateRoute"
 import Home from './components/Home'
 import SinglePosts from './components/SinglePosts'
 import Login from './components/Login'
@@ -20,6 +21,8 @@ class App extends React.Component {
 					<Routes>
 						<Route path="/" element={<Home />} />
 						<Route path="/post/:id" element={<SinglePosts />} />
+						
+						
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
 						<Route path="/dashboard" element={<Dashboard />} />
@@ -28,6 +31,10 @@ class App extends React.Component {
 						{/* <Route exact path="/" component={Home} />
 						<Route exact path="/path/:id" component={SinglePosts} /> */}
 					</Routes>
+					{/* <Switch>
+						<PrivateRoute exact path="/login" authenticated={false} component={Login} />
+					</Switch> */}
+						
 				</Provider>	
 				
 		  	</BrowserRouter>

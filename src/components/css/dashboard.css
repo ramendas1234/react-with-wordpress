@@ -1,3 +1,7 @@
+
+.height-100, #root {
+  height: 100%;
+}
 .nav>li>a:focus, .nav>li>a:hover {
     background-color: #2196f3;
   }
@@ -79,7 +83,10 @@
 }
 
 
-
+/* Create Ads */
+.create-ads-form-wrapper{
+  max-width: 600px;
+}
 
 /* Footer */
 

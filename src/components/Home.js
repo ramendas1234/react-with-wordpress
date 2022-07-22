@@ -20,7 +20,7 @@ function removeHTML(str){
 
 function Home(props) {
   
-  const { postsData, fetchPosts } = props  
+  const { uiData, postsData, fetchPosts } = props  
   
   useEffect(() => {
     fetchPosts()
@@ -31,7 +31,7 @@ function Home(props) {
     <div>
         <Navbar />
         <div className='container'>
-        {postsData.loading && <Loader /> }
+        {uiData.page_loading && <Loader /> }
         
             
             {postsData.posts.length>0 ? (
@@ -68,6 +68,7 @@ function Home(props) {
 
 const mapStateToProps = (store) => {
     return {
+        uiData: store.ui,
         postsData: store.post
     }
 }

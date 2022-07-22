@@ -15,8 +15,8 @@ import Loader from './Loader'
 function SinglePosts(props) {
   let { id } = useParams();
   
-  const { postData, fetchPostDetail } = props
-  const { loading,error,post_details } = postData
+  const { uiData, postData, fetchPostDetail } = props
+  const { message,post_details } = postData
   useEffect(() => {
     fetchPostDetail(id)
   }, [])
@@ -28,9 +28,9 @@ function SinglePosts(props) {
   return (
     <>
       <Navbar/>
-      {error && <div className='alert alert-danger'>{error}</div>}
+      {message && <div className='alert alert-danger'>{message}</div>}
       <div className='container'>
-        {loading && <Loader /> }
+        {uiData.page_loading && <Loader /> }
         {Object.keys(post_details).length != 0 && (
           
           <div className='row'>
@@ -53,7 +53,7 @@ function SinglePosts(props) {
 
         ) }
         
-        {loading}
+        {uiData.page_loading}
       </div>
       <Footer/>
     </>
@@ -63,6 +63,7 @@ function SinglePosts(props) {
 
 const mapStateToProps = (store) => {
   return {
+      uiData: store.ui,
       postData: store.post
   }
 }

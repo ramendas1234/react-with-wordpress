@@ -12,6 +12,7 @@ import Logout from './components/Logout'
 import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import UpdateProfile from './components/UpdateProfile'
+import CreateAds from './components/CreateAds'
 
 class App extends React.Component {
 	render() {
@@ -27,6 +28,7 @@ class App extends React.Component {
 						<Route path="/register" element={<Register />} />
 						<Route path="/dashboard" element={<Dashboard />} />
 						<Route path="/dashboard/profile" element={<UpdateProfile />} />
+						<Route path="/ads/create" element={<CreateAds />} />
 						<Route path="/logout" element={<Logout />} />
 						{/* <Route exact path="/" component={Home} />
 						<Route exact path="/path/:id" component={SinglePosts} /> */}

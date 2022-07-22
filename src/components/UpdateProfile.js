@@ -178,15 +178,9 @@ function UpdateProfile(props) {
         {/* <div className='container'>
             Welcome { userData.user_display_name }
         </div> */}
-        <div class="container-fluid display-table">
-          <div class="row">
-              <div class="col-md-2 col-sm-1 p-3 text-white bg-dark" id="dashboard-navigation">
-                  
-                  
-              <DashboardNavigation/>
-
-
-              </div>
+        <div class="container-fluid display-table height-100">
+          <div class="row height-100">
+          <DashboardNavigation/>
               <div class="col-md-10 col-sm-11 display-table-cell v-align" style={{height: "100vh"}}>
                   
                   <div class="user-dashboard py-5">

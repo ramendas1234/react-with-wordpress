@@ -112,6 +112,9 @@ export const isUserLoggedIn = () => (dispatch) => {
         })
         .catch(error => {
             console.log(error.response.data.message)
+            localStorage.removeItem('userdata');
+            localStorage.removeItem('FBIdToken');
+            delete axios.defaults.headers.common['Authorization'];
             dispatch(setUnAuthenticated())
         })
     }
@@ -145,4 +148,12 @@ export const updateUserData = (postData={},headers={},updateAvatar=false) => (di
 		dispatch(setUser(userObject,msg))
 	})
 	.catch(error => dispatch(setUserError(error.response.data.message)))
+}
+
+export const logoutUser = () => (dispatch) =>{
+    localStorage.removeItem('userdata');
+    localStorage.removeItem('FBIdToken');
+    delete axios.defaults.headers.common['Authorization'];
+    dispatch(setUnAuthenticated())
+    
 }

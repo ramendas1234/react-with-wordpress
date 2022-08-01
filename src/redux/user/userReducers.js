@@ -28,6 +28,7 @@ const userReducer = (state=initialState, action) => {
         case SET_UNAUTHENTICATED :
             return {
                 ... state,
+                user_details:{},
                 authenticated: false
             }       
         case SET_USER:

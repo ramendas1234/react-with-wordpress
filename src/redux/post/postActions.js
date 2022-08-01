@@ -130,12 +130,23 @@ export const createPost = (postData={}) => {
             dispatch(createPostRequest(data))
             dispatch(completeRequest())
         })
-        .catch(error => {
-            const errorMsg = error.message
-            dispatch(fetchPostsFailure(errorMsg))
-            dispatch(completeRequest())
-            //console.log(error)
-		})
+        .catch(function (error) {
+            if (error.response) {
+              // Request made and server responded
+
+              const errorObj = error.response.data
+    
+              dispatch(fetchPostsFailure(errorObj.message))
+              dispatch(completeRequest())
+            } else if (error.request) {
+              // The request was made but no response was received
+              console.log(error.request);
+            } else {
+              // Something happened in setting up the request that triggered an Error
+              console.log('Error', error.message);
+            }
+        
+          })
     }
 }
 

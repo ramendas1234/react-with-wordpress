@@ -1,26 +1,49 @@
-import React from 'react'
-import { Route, Redirect } from 'react-router-dom';
+import React, {useEffect} from 'react'
+import { Route, Redirect, Navigate } from 'react-router-dom';
+import { connect } from 'react-redux'
+import Loader from './Loader';
+import CreateAds from './CreateAds';
 
+
+import { loginUser, isUserLoggedIn } from '../redux'
 
 // const PrivateRoute = (props) => {
     
 
 // }
 
-function PrivateRoute(props){
-  const { component: Component,authenticated, ...rest } = props
+// function PrivateRoute(props){
+//   const { component: Component,authenticated, ...rest } = props
+//     console.log('vhgvghvc');
+//     return (
+//         <Route path="/ads/create" element={<CreateAds />} />
+//     );
+// }
 
-    return (
-        <Route {...rest} render={props => {
-            if (!authenticated) {
-                // not logged in so redirect to login page with the return url
-                return <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-            }
+function PrivateRoute({ children, userData,uiData }) {
+    
+    if(uiData.page_loading){
+        return <Loader />;
+    }else{
+        return userData.authenticated === true ? children : <Navigate to="/login" replace />;
+    }
 
-            // authorized so return component
-            return <Component {...props} />
-        }} />
-    );
-}
+    
+    
+  }
 
-export default PrivateRoute
+const mapStateToProps = (store) => ({
+    uiData: store.ui,
+    userData: store.user
+})
+
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        isUserLoggedIn: () => {
+            dispatch(isUserLoggedIn())
+        }
+    }
+  }
+
+
+export default connect(mapStateToProps,mapDispatchToProps)(PrivateRoute)

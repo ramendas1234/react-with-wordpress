@@ -42,12 +42,7 @@ const CreateAds = (props) =>  {
 
   useEffect(() => {
        
-    isUserLoggedIn()
     fetchCategories()
-    if (!userData.authenticated) {
-        return <Navigate to='/login'/>;
-    }
-    
   },[])
 
  useEffect(() => {
@@ -63,6 +58,19 @@ const CreateAds = (props) =>  {
   
 
 },[postData.categories]) 
+
+useEffect(() => {
+  if( postData.message!='' ){
+    if(postData.flag){
+      swal("Success!", postData.message, "success");
+    }else{
+      swal("Oops!", postData.message, "error");
+    }
+    
+  }
+  
+
+},[postData.message]) 
 
 
 
@@ -100,23 +108,17 @@ const CreateAds = (props) =>  {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let postData = {
+    let adsData = {
       title: ads.title,
       content: ads.content,
       categories: ads.selectedCategories.map(item => item.id)
     }
-    submitPost(postData)
+    submitPost(adsData)
+    
   }
 
   //console.log(ads)
-  if(postData.message.length>0){
-    if(postData.flag){
-      swal("Success!", postData.message, "success");
-    }else{
-      swal("Oops!", postData.message, "error");
-    }
-    
-  }
+  
 
   return (
     <>

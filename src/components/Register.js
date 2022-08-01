@@ -18,18 +18,15 @@ import Container from 'react-bootstrap/Container'
 import Alert from 'react-bootstrap/Alert'
 import Navbar from './Navbar'
 import Footer from './Footer'
+import Loader from './Loader';
+
 
 // import { isUserLoggedIn, getUserData } from './actions/actions'
 
 function Register(props) {
-  const { userData, registerUser, isUserLoggedIn } = props;
+  const { uiData, userData, registerUser, isUserLoggedIn } = props;
   
-  useEffect(() => {
-      isUserLoggedIn()
-      if (userData.authenticated) {
-          return <Navigate to='/dashboard'/>;
-        }
-  },[])
+  
 
   let registredInitial = {
     data:{
@@ -87,138 +84,143 @@ function Register(props) {
 
  
   let alertClass = (userData.success_msg.length>0)?'success':'danger'
-    
-  return (
+  
+  if(uiData.page_loading){
+      return <Loader />;
+  }else{
+      return userData.authenticated === true ? <Navigate to="/dashboard" replace />
+      : (
 
-    <>
-      <Navbar />
-      <Container>
-      <Row className="justify-content-md-center">
+        <>
+          <Navbar />
+          <Container>
+          <Row className="justify-content-md-center">
+              
           
-      
-      
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
-          <Row className="my-5">
-            <Col  md={{ span: 4, offset: 4 }}>
-              <h3 className='my-3'>Register Your Account</h3>
-              {userData.success_msg.length>0 &&  (
-                <Alert  variant={alertClass}>
-                  {userData.success_msg}
-                </Alert>
-              ) }
+          
+          <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Row className="my-5">
+                <Col  md={{ span: 4, offset: 4 }}>
+                  <h3 className='my-3'>Register Your Account</h3>
+                  {userData.success_msg.length>0 &&  (
+                    <Alert  variant={alertClass}>
+                      {userData.success_msg}
+                    </Alert>
+                  ) }
 
-              {userData.error.length>0 &&  (
-                <Alert  variant={alertClass}>
-                  {userData.error}
-                </Alert>
-              ) }
-              
-              
-              <Form.Group as={Col} className="mb-3" controlId="validationCustom01">
+                  {userData.error.length>0 &&  (
+                    <Alert  variant={alertClass}>
+                      {userData.error}
+                    </Alert>
+                  ) }
+                  
+                  
+                  <Form.Group as={Col} className="mb-3" controlId="validationCustom01">
+                        <Form.Control
+                          required
+                          type="text"
+                          placeholder="First name"
+                          name='first_name'
+                          value={register.data.first_name}
+                          onChange={handleChange}
+                        />
+                        <Form.Control.Feedback type="invalid">{register.errors.first_name}</Form.Control.Feedback>
+                    </Form.Group>
+
+                    <Form.Group as={Col} className="mb-3" controlId="validationCustom02">
+                  
                     <Form.Control
-                      required
-                      type="text"
-                      placeholder="First name"
-                      name='first_name'
-                      value={register.data.first_name}
-                      onChange={handleChange}
-                    />
-                    <Form.Control.Feedback type="invalid">{register.errors.first_name}</Form.Control.Feedback>
+                        required
+                        type="text"
+                        placeholder="Last name"
+                        name='last_name'
+                        value={register.data.last_name}
+                        onChange={handleChange}
+                      />
+                    <Form.Control.Feedback type="invalid">{register.errors.last_name}</Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} className="mb-3"  controlId="validationCustomUsername">
+                    <InputGroup hasValidation>
+                      <Form.Control
+                        type="text"
+                        placeholder="Username"
+                        aria-describedby="inputGroupPrepend"
+                        required
+                        name='username'
+                        value={register.data.username}
+                        onChange={handleChange}
+                      />
+                      <Form.Control.Feedback type="invalid">
+                      {register.errors.username}
+                      </Form.Control.Feedback>
+                    </InputGroup>
+                  </Form.Group>
+
+                  <Form.Group as={Col} className="mb-3" controlId="validationCustom03">
+                    <Form.Control type="email" placeholder="email" required name='email'
+                        value={register.data.email}
+                        onChange={handleChange} />
+                    <Form.Control.Feedback type="invalid">
+                    {register.errors.email}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} className="mb-3" >
+                    <Form.Control type="text" placeholder="password" required name='password'
+                        value={register.data.password}
+                        onChange={handleChange} />
+                    <Form.Control.Feedback type="invalid">
+                    {register.errors.password}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group as={Col} className="mb-3" >
+                    <Form.Control type="text" placeholder="confirm password" required name='confirm_password'
+                        value={register.data.confirm_password}
+                        onChange={handleChange} />
+                    <Form.Control.Feedback type="invalid">
+                    {register.errors.confirm_password}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+
+                  <Form.Group className="mb-3">
+                  <Form.Check
+                    required
+                    label="Agree to terms and conditions"
+                    name='terms_condition'
+                    value={register.data.terms_condition}
+                    onChange={handleChange}
+                    feedback={register.errors.terms_condition}
+                    feedbackType="invalid"
+                  />
                 </Form.Group>
+                <Button type="submit"  btnClassName="btn btn-primary" loading={userData.btn_loading} >Register</Button>
+                </Col>
+                  
+              </Row>
 
-                <Form.Group as={Col} className="mb-3" controlId="validationCustom02">
-              
-                <Form.Control
-                    required
-                    type="text"
-                    placeholder="Last name"
-                    name='last_name'
-                    value={register.data.last_name}
-                    onChange={handleChange}
-                  />
-                <Form.Control.Feedback type="invalid">{register.errors.last_name}</Form.Control.Feedback>
-              </Form.Group>
 
-              <Form.Group as={Col} className="mb-3"  controlId="validationCustomUsername">
-                <InputGroup hasValidation>
-                  <Form.Control
-                    type="text"
-                    placeholder="Username"
-                    aria-describedby="inputGroupPrepend"
-                    required
-                    name='username'
-                    value={register.data.username}
-                    onChange={handleChange}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                  {register.errors.username}
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3" controlId="validationCustom03">
-                <Form.Control type="email" placeholder="email" required name='email'
-                    value={register.data.email}
-                    onChange={handleChange} />
-                <Form.Control.Feedback type="invalid">
-                {register.errors.email}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3" >
-                <Form.Control type="text" placeholder="password" required name='password'
-                    value={register.data.password}
-                    onChange={handleChange} />
-                <Form.Control.Feedback type="invalid">
-                {register.errors.password}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              <Form.Group as={Col} className="mb-3" >
-                <Form.Control type="text" placeholder="confirm password" required name='confirm_password'
-                    value={register.data.confirm_password}
-                    onChange={handleChange} />
-                <Form.Control.Feedback type="invalid">
-                {register.errors.confirm_password}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              <Form.Group className="mb-3">
-              <Form.Check
-                required
-                label="Agree to terms and conditions"
-                name='terms_condition'
-                value={register.data.terms_condition}
-                onChange={handleChange}
-                feedback={register.errors.terms_condition}
-                feedbackType="invalid"
-              />
-            </Form.Group>
-            <Button type="submit"  btnClassName="btn btn-primary" loading={userData.btn_loading} >Register</Button>
-            </Col>
-              
+            </Form>
+          
+          
+          
+          
+          
+          
           </Row>
+          
+        </Container>
+        <Footer />
+        </>
 
-
-        </Form>
-      
-      
-      
-      
-      
-      
-      </Row>
-      
-    </Container>
-    <Footer />
-    </>
-    
-    
-  )
+      )
+    }
 }
 
 const mapStateToProps = (store) => {
   return {
+      uiData: store.ui,
       userData: store.user
   }
 }

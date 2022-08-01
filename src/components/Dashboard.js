@@ -15,12 +15,12 @@ import './css/dashboard.css'
 function Dashboard(props) {
     
       const { userData,isUserLoggedIn  } = props
-      useEffect(() => {
+      /*useEffect(() => {
           isUserLoggedIn()
           if (!userData.authenticated) {
               return <Navigate to='/login'/>;
             }
-      },[])
+      },[])*/
   return (
     <>
         <Navbar />

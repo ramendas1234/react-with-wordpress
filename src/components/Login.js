@@ -10,26 +10,20 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import Button from './Button'
 import Error from './Error'
+import Loader from './Loader';
 import { SITE_URL } from './constant/constant'
 //import { isUserLoggedIn, getUserData, setAuthorizationHeader } from './actions/actions'
 
 function Login(props) {
-    const navigate = useNavigate();
-    const { userData, loginUser, isUserLoggedIn } = props
 
-    useEffect(() => {
-        
-        isUserLoggedIn()
-        // setTimeout(function(){
-        //     console.log(userData);
-        // },2000)
-        console.log(userData);
-        if (userData.authenticated) {
-            //return <Navigate to='/dashboard'/>;
-            navigate('/dashboard')
-          }
-        
-    },[props.userData.authenticated])
+    //console.log(props)
+    const navigate = useNavigate();
+    const { uiData, userData, loginUser, isUserLoggedIn } = props
+    /*if (userData.authenticated) {
+        //return <Navigate to='/dashboard'/>;
+        navigate('/dashboard')
+    } */
+    
     
     
 
@@ -65,40 +59,84 @@ function Login(props) {
     //     return <Navigate to='/dashboard'/>;
     //   }
 
-  return (
-    <>
+    if(uiData.page_loading){
+        return <Loader />;
+    }else{
+        return userData.authenticated === true ? <Navigate to="/dashboard" replace /> : (
+
+            <>
     
 
-        <Navbar />
-        <div className='container m-5'>
-            <div className='offset-md-6 col-md-4'>
-            <h3 className='my-3'>Login Your Account</h3>
-                {userData.error.length>0 && <Error msg={userData.error}/> }
-                
-                <form onSubmit={handleSubmit}>
-                    <div class="form-group mb-3">
-                        <input type="email" name="email" value={loginData.email} onChange={handleChange} class="form-control"  placeholder="Email" />
+                <Navbar />
+                        {!userData.authenticated && 
+                        
+                        <div className='container m-5'>
+                            <div className='offset-md-6 col-md-4'>
+                            <h3 className='my-3'>Login Your Account</h3>
+                                {userData.error.length>0 && <Error msg={userData.error}/> }
+                                
+                                <form onSubmit={handleSubmit}>
+                                    <div class="form-group mb-3">
+                                        <input type="email" name="email" value={loginData.email} onChange={handleChange} class="form-control"  placeholder="Email" />
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <input type="password" name="password" value={loginData.password} onChange={handleChange} class="form-control"  placeholder="Password" />
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        {/* <button type="submit" class="btn btn-danger">Login</button> */}
+                                        <Button btnClassName="btn btn-primary" loading={userData.btn_loading}>Login</Button>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                        
                     </div>
-                    <div class="form-group mb-3">
-                        <input type="password" name="password" value={loginData.password} onChange={handleChange} class="form-control"  placeholder="Password" />
-                    </div>
-                    <div class="form-group mb-3">
-                        {/* <button type="submit" class="btn btn-danger">Login</button> */}
-                        <Button btnClassName="btn btn-primary" loading={userData.btn_loading}>Login</Button>
-                    </div>
-                    
-                </form>
-            </div>
-        
-    </div>
-    <Footer />
-    </>  
+                        }
+                        
+                    <Footer />
+            </>
+        );
+    }
+
+//   return (
+//     <>
     
-  )
+
+//         <Navbar />
+//         {!userData.authenticated && 
+        
+//         <div className='container m-5'>
+//             <div className='offset-md-6 col-md-4'>
+//             <h3 className='my-3'>Login Your Account</h3>
+//                 {userData.error.length>0 && <Error msg={userData.error}/> }
+                
+//                 <form onSubmit={handleSubmit}>
+//                     <div class="form-group mb-3">
+//                         <input type="email" name="email" value={loginData.email} onChange={handleChange} class="form-control"  placeholder="Email" />
+//                     </div>
+//                     <div class="form-group mb-3">
+//                         <input type="password" name="password" value={loginData.password} onChange={handleChange} class="form-control"  placeholder="Password" />
+//                     </div>
+//                     <div class="form-group mb-3">
+//                         {/* <button type="submit" class="btn btn-danger">Login</button> */}
+//                         <Button btnClassName="btn btn-primary" loading={userData.btn_loading}>Login</Button>
+//                     </div>
+                    
+//                 </form>
+//             </div>
+        
+//     </div>
+//         }
+        
+//     <Footer />
+//     </>  
+    
+//   )
 }
 
 const mapStateToProps = (store) => {
     return {
+        uiData: store.ui,
         userData: store.user
     }
 }

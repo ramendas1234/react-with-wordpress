@@ -1,9 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import { isUserLoggedIn } from './actions/actions'
+import { logoutUser } from '../redux'
 
-function Navbar() {
+function Navbar({userData}) {
   return (
 	<nav className="navbar navbar-expand-lg navbar-dark bg-primary">
 		<div className="container-fluid">
@@ -16,7 +18,7 @@ function Navbar() {
 				</li>
 				
 
-				{!isUserLoggedIn()
+				{!userData.authenticated
 					? <>
 					<li className="nav-item">
 					<Link className="nav-link " to='/login'>Login</Link>
@@ -45,4 +47,16 @@ function Navbar() {
   )
 }
 
-export default Navbar
+const mapStateToProps = (store) => ({
+	userData: store.user
+})
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		logoutUser: () => {
+			dispatch(logoutUser())
+		}
+	}
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(Navbar)

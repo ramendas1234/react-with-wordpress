@@ -123,6 +123,7 @@ export const createPost = (postData={}) => {
     return (dispatch) => {
         dispatch({ type:CLEAR_ERRORS })
         dispatch(buttonLoadingRequest())
+        
         axios.post(`${SITE_URL}/wp-json/wp/v2/posts`,postData)
         .then(response => {
             

@@ -1,9 +1,10 @@
-import { FETCH_USER_REQUEST, SET_AUTHENTICATED, SET_UNAUTHENTICATED ,SET_USER_ERRORS,SET_USER, USER_REGISTER, AVATAR_LOADING, SITE_URL } from '../types'
+import { FETCH_USER_REQUEST, SET_AUTHENTICATED, SET_UNAUTHENTICATED ,SET_USER_ERRORS,SET_USER, USER_REGISTER, AVATAR_LOADING, FETCH_USER_ADS, SITE_URL } from '../types'
 const initialState = {
 	btn_loading: false,
     authenticated: false,
     avatar_loading:false,
-	user_details:{},
+	user_details: JSON.parse(localStorage.getItem('userdata')),
+	user_posts: [],
 	error: '',
     success_msg:''
 }
@@ -53,6 +54,11 @@ const userReducer = (state=initialState, action) => {
                 ... state,
                 btn_loading: false,
                 error: action.payload
+            }
+        case FETCH_USER_ADS:
+            return {
+                ... state,
+                user_posts: action.payload
             }
         default:
             return state    

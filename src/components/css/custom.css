@@ -15,3 +15,8 @@ html, body {
   .card-body img.banner{
     width: 100%;
   }
+
+  /* hide react gallery upload button */
+  .rug-card-upload-button{
+    display: none;
+  }

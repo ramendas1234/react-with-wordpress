@@ -14,15 +14,17 @@ import Register from './components/Register'
 import Dashboard from './components/Dashboard'
 import UpdateProfile from './components/UpdateProfile'
 import CreateAds from './components/CreateAds'
+import MyAds from './components/MyAds'
+import Test from './components/Test'
 
 import jwt_decode from "jwt-decode";
 
 
 store.dispatch(pageLoadingRequest())
 store.dispatch(isUserLoggedIn())
-setTimeout(()=>{
-	store.dispatch(completeRequest())
-},2000)
+// setTimeout(()=>{
+// 	store.dispatch(completeRequest())
+// },500)
 
 class App extends React.Component {
 	
@@ -61,6 +63,23 @@ class App extends React.Component {
 							</PrivateRoute>
 							}
 						/>
+
+						<Route
+							path="/ads"
+							element={
+							<PrivateRoute>
+								<MyAds />
+							</PrivateRoute>
+							}
+						/>
+
+						<Route
+							path="/fff"
+							element={
+								<Test />
+							}
+						/>
+
 						
 						{/* <PrivateRoute exact path="/ads/create" authenticated={false} component={CreateAds} /> */}
 						{/* <Route exact path="/" component={Home} />

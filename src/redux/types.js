@@ -22,5 +22,6 @@ export const SET_USER = 'SET_USER'
 export const SET_USER_ERRORS = 'SET_USER_ERRORS'
 export const USER_REGISTER = 'USER_REGISTER'
 export const AVATAR_LOADING = 'AVATAR_LOADING'
+export const FETCH_USER_ADS = 'FETCH_USER_ADS'
 
 export const SITE_URL = 'http://localhost/grofers/'

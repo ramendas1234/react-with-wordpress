@@ -6,6 +6,8 @@ import { Navigate, Link } from 'react-router-dom';
 import { connect } from 'react-redux'
 import { fetchCategories,createPost, isUserLoggedIn } from '../redux'
 
+import RUG from 'react-upload-gallery'
+
 
 import Navbar from './Navbar'
 // bootstrap stuff
@@ -22,7 +24,8 @@ import swal from 'sweetalert';
 import DashboardNavigation from './DashboardNavigation'
 
 
-
+// Add style manually
+import 'react-upload-gallery/dist/style.css' // or scss
 import './css/dashboard.css'
 
 const CreateAds = (props) =>  {
@@ -32,7 +35,28 @@ const CreateAds = (props) =>  {
     content:'',
     categories:[],
     selectedCategories:[],
-    btn_loading:false
+    btn_loading:false,
+    gallery:[
+      /*{
+        name: "Item 1",
+        size: "232kb",
+        source:
+          "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=4050&q=80"
+      },
+      {
+        name: "Item 2",
+        size: "23kb",
+        source:
+          "https://images.unsplash.com/photo-1508923567004-3a6b8004f3d7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1834&q=80"
+      },
+      {
+        name: "Item 3",
+        size: "222kb",
+        source:
+          "https://images.unsplash.com/photo-1541837283948-d4242eda4585?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1835&q=80"
+      }*/
+
+    ]
 
   }
   const [ads, setAds] = useState(initialData);
@@ -108,16 +132,28 @@ useEffect(() => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    let adsData = {
+    var formData = new FormData();
+    formData.append( 'title', ads.title );
+    formData.append( 'content', ads.content );
+    formData.append( 'categories', ads.selectedCategories.map(item => item.id) );
+    /*let adsData = {
       title: ads.title,
       content: ads.content,
       categories: ads.selectedCategories.map(item => item.id)
+    }*/
+    if(ads.gallery.length > 0){
+      var gallery = ads.gallery.map((item, index ) => item.file)
+      
+      for(var i=0;i<gallery.length;i++){
+        formData.append("gallery[]", gallery[i]);
+      }
+      
     }
-    submitPost(adsData)
+    submitPost(formData)
     
   }
 
-  //console.log(ads)
+  
   
 
   return (
@@ -174,7 +210,14 @@ useEffect(() => {
                     {/* <Form.Control.Feedback type="invalid">{register.errors.first_name}</Form.Control.Feedback> */}
                 </Form.Group>
                 
-                
+                <RUG initialState={ads.gallery}
+                sorting={false}
+                autoUpload={false}
+                onChange={(images) => {
+                  setAds({... ads, gallery:images })
+                }}
+
+                />
                   {/* <Row>
                     <Col>
                     <Form.Group controlId="exampleForm.ControlTextarea1">

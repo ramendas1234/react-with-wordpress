@@ -32,11 +32,12 @@ export default function DashboardNavigation() {
                             
                               <ul class="nav nav-pills flex-column my-3">
                                 <li className='nav-item'>
-                                  <a href="/ads/create" class="nav-link text-white" aria-current="page">Create</a>
+                                  <a href="/ads" class="nav-link text-white" aria-current="page">Ads</a>
                                 </li>
                                 <li className='nav-item'>
-                                  <a href="#" class="nav-link text-white" aria-current="page">Update</a>
+                                  <a href="/ads/create" class="nav-link text-white" aria-current="page">Create</a>
                                 </li>
+                                
                                 
                               </ul>
                           

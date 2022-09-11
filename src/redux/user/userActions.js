@@ -1,6 +1,6 @@
 import axios from 'axios'
-import { FETCH_USER_REQUEST,SET_AUTHENTICATED, SET_UNAUTHENTICATED ,SET_USER, SET_USER_ERRORS,USER_REGISTER, AVATAR_LOADING, SITE_URL } from '../types'
-
+import { FETCH_USER_REQUEST,SET_AUTHENTICATED, SET_UNAUTHENTICATED ,SET_USER, SET_USER_ERRORS,USER_REGISTER, AVATAR_LOADING, FETCH_USER_ADS, SITE_URL } from '../types'
+import { pageLoadingRequest,completeRequest } from '../index'
 
 export const fetchUserRequest = () => {
     return {
@@ -98,7 +98,9 @@ export const setAuthorizationHeader = (token='') => {
     axios.defaults.headers.common['Authorization'] = FBIdToken ;
 }
 
-export const isUserLoggedIn = () => (dispatch) => {
+export const isUserLoggedIn = () => (dispatch, getState) => {
+    //console.log('current state:', getState());
+
     const token = localStorage.FBIdToken;
     if(token==undefined || token==''){
         dispatch(setUnAuthenticated())
@@ -108,6 +110,7 @@ export const isUserLoggedIn = () => (dispatch) => {
         .then(response => {
             if(response.data.code=='jwt_auth_valid_token'){
                 dispatch(setAuthenticated())
+                dispatch(completeRequest())
             }
         })
         .catch(error => {
@@ -148,6 +151,26 @@ export const updateUserData = (postData={},headers={},updateAvatar=false) => (di
 		dispatch(setUser(userObject,msg))
 	})
 	.catch(error => dispatch(setUserError(error.response.data.message)))
+}
+
+export const fetchUserAds = (userId) => {
+    return (dispatch) => {
+        
+        axios.get(`${SITE_URL}/wp-json/wp/v2/posts?author=${userId}`)
+		.then(response => {
+			const posts = response.data
+            
+			dispatch({
+                type: FETCH_USER_ADS,
+                payload: posts
+            });
+            //dispatch(completeRequest())
+		})
+		.catch(error => {
+			const errorMsg = error.message
+			console.error(errorMsg);
+		})
+    }
 }
 
 export const logoutUser = () => (dispatch) =>{
